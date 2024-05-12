@@ -1,0 +1,14 @@
+services:
+  markdown-translate-dev:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    container_name: markdown-translate-dev
+    volumes:
+        - ./:/workspace
+        - markdown-translate-dev-vsc:/root/.vscode-server
+    stdin_open: true
+    tty: true
+
+volumes:
+  markdown-translate-dev-vsc:
