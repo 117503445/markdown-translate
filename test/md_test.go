@@ -2,11 +2,13 @@ package test
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
 	"bytes"
 
+	"github.com/117503445/markdown-translate/test/examples"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
@@ -21,6 +23,13 @@ func TestMarkdown(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 	t.Log(r)
+
+    r , _ = translateMarkdown([]byte(examples.Mempool))
+
+    os.WriteFile("mempool.md", []byte(r), 0644)
+
+
+    t.Log(examples.Mempool)
 }
 
 func translateText(lang, text string) (string, error) {
