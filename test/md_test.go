@@ -1,13 +1,14 @@
 package test
 
 import (
-	"fmt"
+	// "fmt"
 	"os"
 	"strings"
 	"testing"
 
 	"bytes"
 
+	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/117503445/markdown-translate/test/examples"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -33,7 +34,9 @@ func TestMarkdown(t *testing.T) {
 }
 
 func translateText(lang, text string) (string, error) {
-	return fmt.Sprintf("[翻译]%s[结束]", text), nil
+	// return fmt.Sprintf("[翻译]%s[结束]", text), nil
+    p := provider.NewGoogleProvider()
+    return p.Translate(text), nil
 }
 
 func translateMarkdown(md []byte) (string, error) {

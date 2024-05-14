@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"log"
+
 	gtranslate "github.com/gilang-as/google-translate"
 )
 
@@ -12,6 +14,7 @@ func NewGoogleProvider() *GoogleProvider {
 }
 
 func (p *GoogleProvider) Translate(source string) string {
+	log.Printf("< %s\n", source)
 	value := gtranslate.Translate{
 		Text: source,
 		From: "en",
@@ -21,6 +24,8 @@ func (p *GoogleProvider) Translate(source string) string {
 	if err != nil {
 		panic(err)
 	} else {
-		return translated.Text
+		text := translated.Text
+		log.Printf("> %s\n", text)
+		return text
 	}
 }
