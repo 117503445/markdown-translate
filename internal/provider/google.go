@@ -13,7 +13,7 @@ func NewGoogleProvider() *GoogleProvider {
 	return &GoogleProvider{}
 }
 
-func (p *GoogleProvider) Translate(source string) string {
+func (p *GoogleProvider) Translate(source string) (string, error) {
 	log.Printf("< %s\n", source)
 	value := gtranslate.Translate{
 		Text: source,
@@ -22,10 +22,10 @@ func (p *GoogleProvider) Translate(source string) string {
 	}
 	translated, err := gtranslate.Translator(value)
 	if err != nil {
-		panic(err)
+		return "", err
 	} else {
 		text := translated.Text
 		log.Printf("> %s\n", text)
-		return text
+		return text, nil
 	}
 }

@@ -18,7 +18,7 @@ text3 `inline code` text4
 codeblock1
 ```
 
-text5 $inline_gongshi$ text6
+text5 $a+1$ text6
 
 ![image1](images/1.jpg)
 
