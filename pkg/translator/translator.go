@@ -12,11 +12,15 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-type Translator struct {
-	provider provider.Provider
+type Provider interface {
+	Translate(source string) (string, error)
 }
 
-func NewTranslator(translateProvider provider.Provider) *Translator {
+type Translator struct {
+	provider Provider
+}
+
+func NewTranslator(translateProvider Provider) *Translator {
 	p := translateProvider
 	if p == nil {
 		p = provider.NewGoogleProvider()
