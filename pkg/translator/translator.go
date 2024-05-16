@@ -47,6 +47,7 @@ func (t *Translator) Translate(source string) (string, error) {
 		if entering {
 			switch n := node.(type) {
 			case *ast.Heading:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.Heading")
 				level := n.Level
 				buf.WriteString(strings.Repeat("#", level) + " ")
 				buf.WriteString(string(n.Text(src)))
@@ -61,6 +62,7 @@ func (t *Translator) Translate(source string) (string, error) {
 				buf.WriteString("\n")
 				return ast.WalkSkipChildren, nil
 			case *ast.Paragraph:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.Paragraph")
 				buf.WriteString("\n")
 			case *ast.CodeSpan:
 				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.CodeSpan")
@@ -69,6 +71,7 @@ func (t *Translator) Translate(source string) (string, error) {
 				buf.WriteString("`")
 				return ast.WalkSkipChildren, nil
 			case *ast.Image:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.Image")
 				buf.WriteString("![")
 				buf.WriteString(string(n.Text(src)))
 				buf.WriteString("](")
@@ -85,6 +88,12 @@ func (t *Translator) Translate(source string) (string, error) {
 				}
 				buf.WriteString(translated)
 				buf.WriteString("\n")
+			case *ast.ThematicBreak:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.ThematicBreak")
+				buf.WriteString("---")
+				buf.WriteString("\n")
+			default:
+				log.Debug().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Msg("ast.Node [ignored]")
 			}
 		}
 		return ast.WalkContinue, nil
