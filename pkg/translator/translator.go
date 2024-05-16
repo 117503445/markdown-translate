@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/117503445/markdown-translate/internal/provider"
+	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
@@ -61,7 +62,21 @@ func (t *Translator) Translate(source string) (string, error) {
 				return ast.WalkSkipChildren, nil
 			case *ast.Paragraph:
 				buf.WriteString("\n")
+			case *ast.CodeSpan:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.CodeSpan")
+				buf.WriteString("`")
+				buf.WriteString(string(n.Text(src)))
+				buf.WriteString("`")
+				return ast.WalkSkipChildren, nil
+			case *ast.Image:
+				buf.WriteString("![")
+				buf.WriteString(string(n.Text(src)))
+				buf.WriteString("](")
+				buf.WriteString(string(n.Destination))
+				buf.WriteString(")")
+				return ast.WalkSkipChildren, nil
 			case *ast.Text:
+				log.Debug().Str("Text", string(n.Text(src))).Msg("ast.Text")
 				buf.WriteString(string(n.Text(src)))
 				buf.WriteString("\n\n")
 				translated, err := t.provider.Translate(string(n.Text(src)))
