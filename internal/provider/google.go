@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"log"
+	"github.com/rs/zerolog/log"
 
 	gtranslate "github.com/gilang-as/google-translate"
 )
