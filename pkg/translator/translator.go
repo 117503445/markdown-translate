@@ -2,16 +2,13 @@ package translator
 
 import (
 	"bytes"
-	"strings"
-
-	// "strings"
-
 	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"strings"
 )
 
 type Provider interface {
@@ -49,12 +46,11 @@ func getListItemText(node ast.Node, src []byte) string {
 		rawText = getRawText(child, src)
 		child = child.NextSibling()
 	}
-			
+
 	return rawText
 }
 
 func (t *Translator) Translate(source string) (string, error) {
-	// return t.provider.Translate(source)
 	var buf bytes.Buffer
 
 	markdown := goldmark.New(
@@ -67,7 +63,6 @@ func (t *Translator) Translate(source string) (string, error) {
 
 	doc := markdown.Parser().Parse(text.NewReader(src))
 
-	// log.Debug().Str("Text", string(doc.Dump(src, 2))).Msg("ast.Document")
 	// doc.Dump(src, 2)
 
 	ast.Walk(doc, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
@@ -130,11 +125,15 @@ func (t *Translator) Translate(source string) (string, error) {
 				}
 
 				s += translated + "\n"
+			
+			case *ast.FencedCodeBlock:
+				raw := getRawText(n, src)
+				s += "```" + string(n.Language(src)) + "\n" + raw + "```\n"
 
 			case *ast.Document:
 				return ast.WalkContinue, nil
 			default:
-				log.Debug().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).
+				log.Warn().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).
 					Msg("ast.Node [ignored]")
 			}
 		}
