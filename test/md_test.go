@@ -15,11 +15,14 @@ func TestMockAll(t *testing.T) {
 	assert := assert.New(t)
 
 	translator := translator.NewTranslator(provider.NewMockProvider())
-	r, err := translator.Translate(examples.All)
 
-	assert.Nil(err)
+	for k, v := range examples.Examples {
+		r, err := translator.Translate(v)
 
-	os.WriteFile("./examples/all.mock.out", []byte(r), 0644)
+		assert.Nil(err)
+
+		os.WriteFile("./examples/"+k+".mock.out", []byte(r), 0644)
+	}
 }
 
 func TestGoogleAll(t *testing.T) {
