@@ -12,17 +12,25 @@ type BadgerCache struct {
 	db            *badger.DB
 }
 
-func NewBadgerCache(p translator.Provider, dir string) *BadgerCache {
+type BadgerConfig struct {
+	Dir string
+}
+
+func NewBadgerWithConfig(p translator.Provider, cfg *BadgerConfig) *BadgerCache {
 	const DEFAULT_BADGER_DIR = "./data/badger"
-	if dir == "" {
-		dir = DEFAULT_BADGER_DIR
+	if cfg.Dir == "" {
+		cfg.Dir = DEFAULT_BADGER_DIR
 	}
 
-	db, err := badger.Open(badger.DefaultOptions(dir))
+	db, err := badger.Open(badger.DefaultOptions(cfg.Dir))
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to open badger db")
 	}
 	return &BadgerCache{innerProvider: p, db: db}
+}
+
+func NewBadgerCache(p translator.Provider) *BadgerCache {
+	return NewBadgerWithConfig(p, &BadgerConfig{})
 }
 
 func (b *BadgerCache) Translate(source string) (string, error) {

@@ -1,8 +1,3 @@
-+++
-title = '通过强大的共享内存池扩展区块链共识'
-draft = false
-+++
-
 # Scaling Blockchain Consensus via a Robust Shared Mempool
 
 Fangyu ${\mathrm{Gai}}^{1, {\dagger}}$ ,Jianyu ${\mathrm{Niu}}^{2, {\dagger}}$ ,Ivan Beschastnikh ${}^{3}$ ,Chen Feng ${}^{1}$ ,Sheng Wang ${}^{4}$

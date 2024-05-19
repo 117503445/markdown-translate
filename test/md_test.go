@@ -25,10 +25,24 @@ func TestMockAll(t *testing.T) {
 	}
 }
 
+func TestOpenAI(t *testing.T) {
+	assert := assert.New(t)
+
+	translator := translator.NewTranslator(cache.NewBadgerCache(provider.NewOpenAIProvider()))
+
+	for k, v := range examples.Examples {
+		r, err := translator.Translate(v)
+
+		assert.Nil(err)
+
+		os.WriteFile("./examples/"+k+".openai.out", []byte(r), 0644)
+	}
+}
+
 func TestGoogleAll(t *testing.T) {
 	assert := assert.New(t)
 
-	translator := translator.NewTranslator(cache.NewBadgerCache(provider.NewGoogleProvider(), ""))
+	translator := translator.NewTranslator(cache.NewBadgerCache(provider.NewGoogleProvider()))
 
 	r, err := translator.Translate(examples.All)
 
