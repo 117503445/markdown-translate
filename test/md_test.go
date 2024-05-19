@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/117503445/markdown-translate/internal/provider"
-	"github.com/117503445/markdown-translate/internal/provider/cache"
 	"github.com/117503445/markdown-translate/pkg/translator"
 	"github.com/117503445/markdown-translate/test/examples"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +27,7 @@ func TestMockAll(t *testing.T) {
 func TestOpenAI(t *testing.T) {
 	assert := assert.New(t)
 
-	translator := translator.NewTranslator(cache.NewBadgerCache(provider.NewOpenAIProvider()))
+	translator := translator.NewTranslator(provider.NewOpenAIProvider())
 
 	for k, v := range examples.Examples {
 		r, err := translator.Translate(v)
@@ -42,7 +41,7 @@ func TestOpenAI(t *testing.T) {
 func TestGoogleAll(t *testing.T) {
 	assert := assert.New(t)
 
-	translator := translator.NewTranslator(cache.NewBadgerCache(provider.NewGoogleProvider()))
+	translator := translator.NewTranslator(provider.NewGoogleProvider())
 
 	r, err := translator.Translate(examples.All)
 

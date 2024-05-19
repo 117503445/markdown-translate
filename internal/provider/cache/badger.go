@@ -1,22 +1,19 @@
 package cache
 
 import (
-	"github.com/117503445/markdown-translate/pkg/translator"
-
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/rs/zerolog/log"
 )
 
 type BadgerCache struct {
-	innerProvider translator.Provider
-	db            *badger.DB
+	db *badger.DB
 }
 
 type BadgerConfig struct {
 	Dir string
 }
 
-func NewBadgerWithConfig(p translator.Provider, cfg *BadgerConfig) *BadgerCache {
+func NewBadgerWithConfig(cfg *BadgerConfig) *BadgerCache {
 	const DEFAULT_BADGER_DIR = "./data/badger"
 	if cfg.Dir == "" {
 		cfg.Dir = DEFAULT_BADGER_DIR
@@ -26,17 +23,17 @@ func NewBadgerWithConfig(p translator.Provider, cfg *BadgerConfig) *BadgerCache 
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to open badger db")
 	}
-	return &BadgerCache{innerProvider: p, db: db}
+	return &BadgerCache{db: db}
 }
 
-func NewBadgerCache(p translator.Provider) *BadgerCache {
-	return NewBadgerWithConfig(p, &BadgerConfig{})
+func NewBadgerCache() *BadgerCache {
+	return NewBadgerWithConfig(&BadgerConfig{})
 }
 
-func (b *BadgerCache) Translate(source string) (string, error) {
+func (b *BadgerCache) Get(source string) string {
 	var result string
 
-	b.db.View(func(txn *badger.Txn) error {
+	if err := b.db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(source))
 		if err != nil {
 			return err
@@ -46,20 +43,24 @@ func (b *BadgerCache) Translate(source string) (string, error) {
 			return nil
 		})
 		return err
-	})
+	}); err != nil {
+		log.Warn().Err(err).Str("source", source).Msg("failed to get cache")
+	}
+
 	if result != "" {
 		log.Debug().Str("source", source).Str("result", result).Msg("cache hit")
-		return result, nil
+		return result
+	} else {
+		log.Debug().Str("source", source).Msg("cache miss")
+		return ""
 	}
+}
 
-	translated, err := b.innerProvider.Translate(source)
-
-	if err == nil {
-		log.Debug().Str("source", source).Str("result", translated).Msg("set cache")
-		err = b.db.Update(func(txn *badger.Txn) error {
-			return txn.Set([]byte(source), []byte(translated))
-		})
+func (b *BadgerCache) Set(source string, result string) {
+	err := b.db.Update(func(txn *badger.Txn) error {
+		return txn.Set([]byte(source), []byte(result))
+	})
+	if err != nil {
+		log.Warn().Err(err).Str("source", source).Str("result", result).Msg("failed to set cache")
 	}
-
-	return translated, err
 }

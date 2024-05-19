@@ -2,29 +2,59 @@ package translator
 
 import (
 	"bytes"
+	"strings"
+
 	"github.com/117503445/markdown-translate/internal/provider"
+	"github.com/117503445/markdown-translate/internal/provider/cache"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
-	"strings"
 )
 
 type Provider interface {
 	Translate(source string) (string, error)
 }
 
+type Cache interface {
+	Get(source string) string
+	Set(source string, result string) 
+}
+
 type Translator struct {
 	provider Provider
+	cache    Cache
+}
+
+type TranslatorConfig struct {
+	Provider Provider
+	Cache    Cache
 }
 
 func NewTranslator(translateProvider Provider) *Translator {
-	p := translateProvider
-	if p == nil {
+	cfg := &TranslatorConfig{
+		Provider: translateProvider,
+	}
+	return NewTranslatorWithConfig(cfg)
+}
+
+func NewTranslatorWithConfig(cfg *TranslatorConfig) *Translator {
+	var p Provider
+	if cfg.Provider != nil {
+		p = cfg.Provider
+	} else {
 		p = provider.NewGoogleProvider()
 	}
-	return &Translator{provider: p}
+
+	var c Cache
+	if cfg.Cache != nil {
+		c = cfg.Cache
+	} else {
+		c = cache.NewBadgerCache()
+	}
+
+	return &Translator{provider: p, cache: c}
 }
 
 func getRawText(node ast.Node, src []byte) string {
@@ -48,6 +78,21 @@ func getListItemText(node ast.Node, src []byte) string {
 	}
 
 	return rawText
+}
+
+func (t *Translator) translateWithCache(source string) (string, error) {
+	if result := t.cache.Get(source); result != "" {
+		return result, nil
+	}
+
+	translated, err := t.provider.Translate(source)
+	if err != nil {
+		return "", err
+	}
+
+	t.cache.Set(source, translated)
+
+	return translated, nil
 }
 
 func (t *Translator) Translate(source string) (string, error) {
@@ -77,7 +122,7 @@ func (t *Translator) Translate(source string) (string, error) {
 				s += strings.Repeat("#", level) + " "
 				s += string(n.Text(src)) + " "
 				translated, err :=
-					t.provider.Translate(string(n.Text(src)))
+					t.translateWithCache(string(n.Text(src)))
 				if err != nil {
 					return ast.WalkStop, err
 				}
@@ -88,7 +133,7 @@ func (t *Translator) Translate(source string) (string, error) {
 				raw := getRawText(n, src)
 				s += raw + "\n\n"
 
-				translated, err := t.provider.Translate(raw)
+				translated, err := t.translateWithCache(raw)
 				if err != nil {
 					return ast.WalkStop, err
 				}
@@ -111,7 +156,7 @@ func (t *Translator) Translate(source string) (string, error) {
 
 				s += rawS + "\n"
 
-				translated, err := t.provider.Translate(rawS)
+				translated, err := t.translateWithCache(rawS)
 				if err != nil {
 					return ast.WalkStop, err
 				}
