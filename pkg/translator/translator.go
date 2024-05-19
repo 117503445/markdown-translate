@@ -74,34 +74,26 @@ func (t *Translator) Translate(source string) (string, error) {
 			switch n := node.(type) {
 			case *ast.Heading:
 				level := n.Level
-				buf.WriteString(strings.Repeat("#", level) + " ")
-				buf.WriteString(string(n.Text(src)))
-				buf.WriteString(" ")
+				s += strings.Repeat("#", level) + " "
+				s += string(n.Text(src)) + " "
 				translated, err :=
 					t.provider.Translate(string(n.Text(src)))
 				if err != nil {
 					return ast.WalkStop, err
 				}
-				buf.WriteString(translated)
-				buf.WriteString("\n\n")
+				s += translated + "\n\n"
 			case *ast.ThematicBreak:
-				buf.WriteString("---\n\n")
+				s += "---\n"
 			case *ast.Paragraph:
 				raw := getRawText(n, src)
-				_, err := buf.WriteString(raw + "\n\n")
-				if err != nil {
-					return ast.WalkStop, err
-				}
+				s += raw + "\n\n"
 
 				translated, err := t.provider.Translate(raw)
 				if err != nil {
 					return ast.WalkStop, err
 				}
 
-				_, err = buf.WriteString(translated + "\n\n")
-				if err != nil {
-					return ast.WalkStop, err
-				}
+				s += translated + "\n\n"
 			case *ast.List:
 				rawS := ""
 
@@ -125,10 +117,14 @@ func (t *Translator) Translate(source string) (string, error) {
 				}
 
 				s += translated + "\n"
-			
+
 			case *ast.FencedCodeBlock:
 				raw := getRawText(n, src)
 				s += "```" + string(n.Language(src)) + "\n" + raw + "```\n"
+
+			case *ast.HTMLBlock:
+				raw := getRawText(n, src)
+				s += raw + "\n"
 
 			case *ast.Document:
 				return ast.WalkContinue, nil
