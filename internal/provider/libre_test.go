@@ -5,14 +5,12 @@ import (
 
 	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/rs/zerolog/log"
-
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOpenAIProvider_Translate(t *testing.T) {
-
+func TestLibreProvider_Translate(t *testing.T) {
 	assert := assert.New(t)
-	p := provider.NewOpenAIProvider()
+	p := provider.NewLibreProvider()
 
 	sources := []string{
 		"where $K$ is the workload for receiving a proposal from the leader. Finally, we can derive the maximum throughput as",
@@ -22,7 +20,7 @@ func TestOpenAIProvider_Translate(t *testing.T) {
 
 	for _, source := range sources {
 		text, err := p.Translate(source)
-		assert.Nil(err)
+		assert.NoError(err)
 
 		log.Debug().Str("source", source).Str("text", text).Msg("translated")
 	}

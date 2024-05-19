@@ -43,9 +43,11 @@ func TestGoogleAll(t *testing.T) {
 
 	translator := translator.NewTranslator(provider.NewGoogleProvider())
 
-	r, err := translator.Translate(examples.All)
+	for k, v := range examples.Examples {
+		r, err := translator.Translate(v)
 
-	assert.Nil(err)
+		assert.Nil(err)
 
-	os.WriteFile("./examples/all.google.out", []byte(r), 0644)
+		os.WriteFile("./examples/"+k+".google.out", []byte(r), 0644)
+	}
 }

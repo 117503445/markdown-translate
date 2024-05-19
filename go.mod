@@ -5,7 +5,9 @@ go 1.22.3
 require (
 	github.com/dgraph-io/badger/v4 v4.2.0
 	github.com/gilang-as/google-translate v0.1.1
+	github.com/go-resty/resty/v2 v2.11.0
 	github.com/rs/zerolog v1.32.0
+	github.com/sashabaranov/go-openai v1.24.0
 	github.com/stretchr/testify v1.9.0
 	github.com/yuin/goldmark v1.7.1
 )
@@ -27,11 +29,11 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sashabaranov/go-openai v1.24.0 // indirect
+	github.com/snakesel/libretranslate v0.0.2 // indirect
 	go.opencensus.io v0.22.5 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
