@@ -39,6 +39,20 @@ func getRawText(node ast.Node, src []byte) string {
 	return rawText
 }
 
+func getListItemText(node ast.Node, src []byte) string {
+	if node.Kind() != ast.KindListItem {
+		panic("node is not a ListItem")
+	}
+	rawText := ""
+	child := node.FirstChild()
+	for child != nil {
+		rawText = getRawText(child, src)
+		child = child.NextSibling()
+	}
+			
+	return rawText
+}
+
 func (t *Translator) Translate(source string) (string, error) {
 	// return t.provider.Translate(source)
 	var buf bytes.Buffer
@@ -57,6 +71,9 @@ func (t *Translator) Translate(source string) (string, error) {
 	// doc.Dump(src, 2)
 
 	ast.Walk(doc, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
+
+		s := ""
+
 		if entering {
 			// log.Debug().Str("Type", node.Kind().String()).Msg("Node")
 			switch n := node.(type) {
@@ -90,6 +107,29 @@ func (t *Translator) Translate(source string) (string, error) {
 				if err != nil {
 					return ast.WalkStop, err
 				}
+			case *ast.List:
+				rawS := ""
+
+				child := n.FirstChild()
+				for child != nil {
+					switch c := child.(type) {
+					case *ast.ListItem:
+						raw := getListItemText(c, src)
+						rawS += "- " + raw + "\n"
+					default:
+						log.Warn().Str("Type", c.Kind().String()).Msg("ignore Node in List")
+					}
+					child = child.NextSibling()
+				}
+
+				s += rawS + "\n"
+
+				translated, err := t.provider.Translate(rawS)
+				if err != nil {
+					return ast.WalkStop, err
+				}
+
+				s += translated + "\n"
 
 			case *ast.Document:
 				return ast.WalkContinue, nil
@@ -97,6 +137,10 @@ func (t *Translator) Translate(source string) (string, error) {
 				log.Debug().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).
 					Msg("ast.Node [ignored]")
 			}
+		}
+		_, err := buf.WriteString(s)
+		if err != nil {
+			return ast.WalkStop, err
 		}
 		return ast.WalkSkipChildren, nil
 	})
