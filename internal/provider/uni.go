@@ -3,10 +3,9 @@
 package provider
 
 import (
-	"fmt"
-
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog/log"
+	"github.com/tidwall/gjson"
 )
 
 type UniProvider struct {
@@ -28,12 +27,20 @@ func NewUniProvider(cfg *UniProviderConfig) *UniProvider {
 }
 
 func (p *UniProvider) Translate(source string) (string, error) {
-	p.client.R().SetHeader("Content-Type", "application/json").SetBody(map[string]string{
+	resp, err := p.client.R().SetHeader("Content-Type", "application/json").SetBody(map[string]string{
 		"from":     "auto",
-		"to":       "en",
+		"to":       "zh-CHS",
 		"text":     source,
 		"platform": p.platform,
-	})
-	log.Debug().Str("source", source).Msg("translating")
-	return fmt.Sprintf("[翻译]%s[结束]", source), nil
+	}).Post(p.address + "?key=" + p.key)
+	if err != nil {
+		return "", err
+	}
+
+	// log.Debug().Str("resp", resp.String()).Msg("response")
+
+	text := gjson.Get(resp.String(), "data.translate.0.text").String()
+
+	log.Debug().Str("source", source).Str("text", text).Msg("translating")
+	return text, nil
 }

@@ -44,7 +44,10 @@ func (b *BadgerCache) Get(source string) string {
 		})
 		return err
 	}); err != nil {
-		log.Warn().Err(err).Str("source", source).Msg("failed to get cache")
+		if err != badger.ErrKeyNotFound {
+			log.Warn().Err(err).Str("source", source).Msg("failed to get cache")
+		}
+		return ""
 	}
 
 	if result != "" {
