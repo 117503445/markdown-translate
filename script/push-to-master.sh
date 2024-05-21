@@ -2,8 +2,8 @@
 
 git checkout master
 
-# merge the changes from the dev branch
-git merge dev
+# merge the changes from the dev branch, no interactive mode
+git merge dev --no-edit
 
 # push the changes to the master branch
 git push origin master
