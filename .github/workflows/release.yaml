@@ -29,11 +29,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            mdtran-darwin-amd64
-            mdtran-darwin-arm64
-            mdtran-linux-amd64
-            mdtran-linux-arm64
-            mdtran-windows-amd64.exe
-            mdtran-windows-arm64.exe
+            ./target/mdtran-darwin-amd64
+            ./target/mdtran-darwin-arm64
+            ./target/mdtran-linux-amd64
+            ./target/mdtran-linux-arm64
+            ./target/mdtran-windows-amd64.exe
+            ./target/mdtran-windows-arm64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
