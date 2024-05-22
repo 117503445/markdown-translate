@@ -6,6 +6,7 @@ import (
 
 	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/117503445/markdown-translate/internal/provider/cache"
+	"github.com/117503445/markdown-translate/pkg/model"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -13,26 +14,19 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-type Provider interface {
-	Translate(source string) (string, error)
-}
 
-type Cache interface {
-	Get(source string) string
-	Set(source string, result string) 
-}
 
 type Translator struct {
-	provider Provider
-	cache    Cache
+	provider model.Provider
+	cache    model.Cache
 }
 
 type TranslatorConfig struct {
-	Provider Provider
-	Cache    Cache
+	Provider model.Provider
+	Cache    model.Cache
 }
 
-func NewTranslator(translateProvider Provider) *Translator {
+func NewTranslator(translateProvider model.Provider) *Translator {
 	cfg := &TranslatorConfig{
 		Provider: translateProvider,
 	}
@@ -40,14 +34,14 @@ func NewTranslator(translateProvider Provider) *Translator {
 }
 
 func NewTranslatorWithConfig(cfg *TranslatorConfig) *Translator {
-	var p Provider
+	var p model.Provider
 	if cfg.Provider != nil {
 		p = cfg.Provider
 	} else {
 		p = provider.NewGoogleProvider()
 	}
 
-	var c Cache
+	var c model.Cache
 	if cfg.Cache != nil {
 		c = cfg.Cache
 	} else {
