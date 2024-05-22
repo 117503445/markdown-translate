@@ -9,6 +9,6 @@ for arch in "amd64" "arm64"; do
     if [ $os = "windows" ]; then
       bin=$bin.exe
     fi
-    GOOS=$os GOARCH=$arch go build -o $bin ./cmd/mdtran
+    GOOS=$os GOARCH=$arch go build -o $bin main.go
   done
 done

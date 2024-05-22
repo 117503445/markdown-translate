@@ -10,3 +10,6 @@ cobra-cli init
 /usr/sbin/go test -run TestUniAll github.com/117503445/markdown-translate/test -v
 
 go run . 
+
+docker build -t markdown-translate-builder -f Dockerfile.builder .
+docker run --rm -v $(pwd):/workspace markdown-translate-builder
