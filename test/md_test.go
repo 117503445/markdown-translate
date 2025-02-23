@@ -4,12 +4,18 @@ import (
 	"os"
 	"testing"
 
+	"github.com/117503445/goutils"
 	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/117503445/markdown-translate/internal/provider/cache"
 	"github.com/117503445/markdown-translate/pkg/translator"
 	"github.com/117503445/markdown-translate/test/examples"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	goutils.InitZeroLog()
+	m.Run()
+}
 
 func TestMockAll(t *testing.T) {
 	assert := assert.New(t)

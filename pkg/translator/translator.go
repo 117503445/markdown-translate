@@ -14,8 +14,6 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-
-
 type Translator struct {
 	provider model.Provider
 	cache    model.Cache
@@ -109,7 +107,7 @@ func (t *Translator) Translate(source string) (string, error) {
 		s := ""
 
 		if entering {
-			// log.Debug().Str("Type", node.Kind().String()).Msg("Node")
+			log.Debug().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).Msg("ast.Node")
 			switch n := node.(type) {
 			case *ast.Heading:
 				level := n.Level
@@ -124,6 +122,13 @@ func (t *Translator) Translate(source string) (string, error) {
 			case *ast.ThematicBreak:
 				s += "---\n"
 			case *ast.Paragraph:
+				if n.ChildCount() == 1 {
+					child := n.FirstChild()
+					if child.Kind() == ast.KindImage {
+						log.Warn().Msg("Image Paragraph")
+						// panic(1)
+					}
+				}
 				raw := getRawText(n, src)
 				s += raw + "\n\n"
 
@@ -166,7 +171,10 @@ func (t *Translator) Translate(source string) (string, error) {
 				s += raw + "\n"
 
 			case *ast.Document:
+				// ast.Document 是根节点
+				// 只遍历一层，所以只有 ast.Document 需要 ast.WalkContinue
 				return ast.WalkContinue, nil
+
 			default:
 				log.Warn().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).
 					Msg("ast.Node [ignored]")

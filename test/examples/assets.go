@@ -7,10 +7,10 @@ import (
 //go:embed mempool.md
 var Mempool string
 
-//go:embed all.md
-var All string
+//go:embed basic.md
+var Basic string
 
 var Examples = map[string]string{
-	"mempool.md": Mempool,
-	"all.md":     All,
+	// "mempool.md": Mempool,
+	"basic.md": Basic,
 }

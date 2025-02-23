@@ -51,10 +51,10 @@ func (b *BadgerCache) Get(source string) string {
 	}
 
 	if result != "" {
-		log.Debug().Str("source", source).Str("result", result).Msg("cache hit")
+		// log.Debug().Str("source", source).Str("result", result).Msg("cache hit")
 		return result
 	} else {
-		log.Debug().Str("source", source).Msg("cache miss")
+		// log.Debug().Str("source", source).Msg("cache miss")
 		return ""
 	}
 }

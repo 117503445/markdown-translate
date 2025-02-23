@@ -3,7 +3,7 @@ module github.com/117503445/markdown-translate
 go 1.23.3
 
 require (
-	github.com/117503445/goutils v0.0.0-20250122152610-9222983a1e7e
+	github.com/117503445/goutils v0.0.0-20250223141210-85d4eef0d3a2
 	github.com/alecthomas/kong v0.8.1
 	github.com/alecthomas/kong-toml v0.2.0
 	github.com/dgraph-io/badger/v4 v4.5.1

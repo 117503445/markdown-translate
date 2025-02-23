@@ -4,4 +4,6 @@ tasks:
   default:
     desc: "The default task" 
     cmds:
-      - go run ./cmd/mdtran
+      - clear
+      # - go run ./cmd/mdtran
+      - go test -timeout 30s -run ^TestMockAll$ github.com/117503445/markdown-translate/test -v -count=1
