@@ -19,7 +19,7 @@ func NewBadgerWithConfig(cfg *BadgerConfig) *BadgerCache {
 		cfg.Dir = DEFAULT_BADGER_DIR
 	}
 
-	db, err := badger.Open(badger.DefaultOptions(cfg.Dir))
+	db, err := badger.Open(badger.DefaultOptions(cfg.Dir).WithLoggingLevel(badger.WARNING))
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to open badger db")
 	}

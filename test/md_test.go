@@ -11,6 +11,7 @@ import (
 	"github.com/117503445/markdown-translate/pkg/cfg"
 	"github.com/117503445/markdown-translate/pkg/translator"
 	"github.com/117503445/markdown-translate/test/examples"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,6 +24,9 @@ func TestMain(m *testing.M) {
 	// log.Debug().Strs("args", os.Args).Send()
 	cfg.Load("/workspace/config.toml")
 	os.Args = args
+
+	// TODO load level from cfg
+	log.Logger = log.Level(zerolog.TraceLevel)
 
 	m.Run()
 }

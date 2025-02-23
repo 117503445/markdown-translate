@@ -131,7 +131,7 @@ func (t *Translator) Translate(source string) (string, error) {
 		s := ""
 
 		if entering {
-			log.Debug().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).Msg("ast.Node")
+			log.Trace().Str("Type", node.Kind().String()).Str("Text", string(node.Text(src))).Str("Raw", getRawText(node, src)).Msg("ast.Node")
 			switch n := node.(type) {
 			case *ast.Heading:
 				level := n.Level
@@ -146,22 +146,23 @@ func (t *Translator) Translate(source string) (string, error) {
 			case *ast.ThematicBreak:
 				s += "---\n"
 			case *ast.Paragraph:
-				if n.ChildCount() == 1 {
-					child := n.FirstChild()
-					if child.Kind() == ast.KindImage {
-						log.Warn().Msg("Image Paragraph")
-						// panic(1)
-					}
-				}
 				raw := getRawText(n, src)
 				s += raw + "\n\n"
 
-				translated, err := t.translateWithCache(raw)
-				if err != nil {
-					return ast.WalkStop, err
+				if n.ChildCount() == 1 && n.FirstChild().Kind() == ast.KindImage {
+					log.Trace().Msg("Skip Image Paragraph")
+				} else {
+					raw := getRawText(n, src)
+					s += raw + "\n\n"
+
+					translated, err := t.translateWithCache(raw)
+					if err != nil {
+						return ast.WalkStop, err
+					}
+
+					s += translated + "\n\n"
 				}
 
-				s += translated + "\n\n"
 			case *ast.List:
 				rawS := ""
 

@@ -11,6 +11,6 @@ var Mempool string
 var Basic string
 
 var Examples = map[string]string{
-	"mempool.md": Mempool,
-	"basic.md":   Basic,
+	// "mempool.md": Mempool,
+	"basic.md": Basic,
 }

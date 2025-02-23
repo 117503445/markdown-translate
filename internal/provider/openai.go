@@ -44,7 +44,7 @@ func NewOpenAIProvider(providerCfg map[string]string) *OpenAIProvider {
 
 func (p *OpenAIProvider) Translate(source string) (string, error) {
 	content := fmt.Sprintf("请将以下提供的英文Markdown文本翻译成中文。请注意，翻译过程中需严格保持原文语序，不得对原文内容做任何解释或补充。确保所有内容都被翻译，没有遗漏。英文Markdown文本如下:\n %s", source)
-	log.Debug().Str("content", content).Send()
+	log.Trace().Str("content", content).Send()
 
 	resp, err := p.client.CreateChatCompletion(
 		context.Background(),
@@ -65,7 +65,7 @@ func (p *OpenAIProvider) Translate(source string) (string, error) {
 	}
 
 	response := resp.Choices[0].Message.Content
-	log.Debug().Str("response", response).Send()
+	log.Trace().Str("response", response).Send()
 
 	return response, nil
 }
