@@ -7,8 +7,21 @@ import (
 	"github.com/117503445/markdown-translate/pkg/model"
 )
 
-func GetProvider(provider string) (model.Provider, error) {
-	switch provider {
+func GetProvider(providerCfg map[string]string) (model.Provider, error) {
+	providerType, ok := providerCfg["type"]
+	if !ok {
+		return nil, fmt.Errorf("provider type not found")
+	}
+
+	// delete(providerCfg, "type")
+	copiedCfg := make(map[string]string)
+	for k, v := range providerCfg {
+		if k != "type" {
+			copiedCfg[k] = v
+		}
+	}
+
+	switch providerType {
 	case "google":
 		return NewGoogleProvider(), nil
 	case "mock":
@@ -16,7 +29,7 @@ func GetProvider(provider string) (model.Provider, error) {
 	case "libre":
 		return NewLibreProvider(), nil
 	case "openai":
-		return NewOpenAIProvider(), nil
+		return NewOpenAIProvider(providerCfg), nil
 	case "uni":
 		cfg := &UniProviderConfig{
 			Platform: os.Getenv("UNI_PLATFORM"),
@@ -25,6 +38,6 @@ func GetProvider(provider string) (model.Provider, error) {
 		}
 		return NewUniProvider(cfg), nil
 	default:
-		return nil, fmt.Errorf("provider %s not found", provider)
+		return nil, fmt.Errorf("provider %s not found", providerType)
 	}
 }

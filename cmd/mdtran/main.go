@@ -13,7 +13,7 @@ import (
 
 func main() {
 	goutils.InitZeroLog()
-	cfg.Load()
+	cfg.Load("config.toml")
 
 	inputText, err := os.ReadFile(cfg.Cfg.Target)
 	if err != nil {

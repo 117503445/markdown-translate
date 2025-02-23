@@ -12,7 +12,7 @@ import (
 func TestOpenAIProvider_Translate(t *testing.T) {
 
 	assert := assert.New(t)
-	p := provider.NewOpenAIProvider()
+	p := provider.NewOpenAIProvider(map[string]string{})
 
 	sources := []string{
 		"where $K$ is the workload for receiving a proposal from the leader. Finally, we can derive the maximum throughput as",

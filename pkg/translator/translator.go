@@ -6,6 +6,7 @@ import (
 
 	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/117503445/markdown-translate/internal/provider/cache"
+	"github.com/117503445/markdown-translate/pkg/cfg"
 	"github.com/117503445/markdown-translate/pkg/model"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
@@ -46,6 +47,29 @@ func NewTranslatorWithConfig(cfg *TranslatorConfig) *Translator {
 		c = cache.NewBadgerCache()
 	}
 
+	return &Translator{provider: p, cache: c}
+}
+
+func NewTranslatorByCfg() *Translator {
+	p, err := provider.GetProvider(cfg.Cfg.Provider)
+	if err != nil {
+		log.Fatal().Err(err).Msg("GetProvider")
+	}
+
+	cacheType, ok := cfg.Cfg.Cache["type"]
+	if !ok {
+		log.Fatal().Msg("cache type not found")
+	}
+
+	var c model.Cache
+	switch cacheType {
+	case "badger":
+		c = cache.NewBadgerCache()
+	case "disable":
+		c = cache.NewDisableCache()
+	default:
+		log.Fatal().Msg("cache type not found")
+	}
 	return &Translator{provider: p, cache: c}
 }
 

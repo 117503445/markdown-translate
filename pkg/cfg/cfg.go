@@ -8,8 +8,9 @@ import (
 )
 
 var Cfg struct {
-	Target   string `help:"target file" default:"README.md" type:"path"`
-	Provider string `help:"provider" default:"mock"`
+	Target   string            `help:"target file" default:"README.md" type:"path"`
+	Provider map[string]string `help:"provider"`
+	Cache    map[string]string `help:"cache"`
 }
 
 func cfgCheck() {
@@ -20,8 +21,8 @@ func cfgSetDefault() {
 
 }
 
-func Load() {
-	kong.Parse(&Cfg, kong.Configuration(kongtoml.Loader, "config.toml"))
+func Load(fileCfg string) {
+	kong.Parse(&Cfg, kong.Configuration(kongtoml.Loader, fileCfg))
 	cfgCheck()
 	cfgSetDefault()
 	log.Info().Interface("cfg", Cfg).Msg("")
