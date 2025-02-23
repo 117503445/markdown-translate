@@ -152,9 +152,6 @@ func (t *Translator) Translate(source string) (string, error) {
 				if n.ChildCount() == 1 && n.FirstChild().Kind() == ast.KindImage {
 					log.Trace().Msg("Skip Image Paragraph")
 				} else {
-					raw := getRawText(n, src)
-					s += raw + "\n\n"
-
 					translated, err := t.translateWithCache(raw)
 					if err != nil {
 						return ast.WalkStop, err
