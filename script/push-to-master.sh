@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 git checkout master
 
 # merge the changes from the dev branch, no interactive mode
