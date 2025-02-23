@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/117503445/markdown-translate/internal/provider"
-	"github.com/117503445/markdown-translate/internal/provider/cache"
 	"github.com/117503445/markdown-translate/pkg/cfg"
 	"github.com/117503445/markdown-translate/pkg/model"
+	"github.com/117503445/markdown-translate/pkg/provider"
+	"github.com/117503445/markdown-translate/pkg/provider/cache"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"

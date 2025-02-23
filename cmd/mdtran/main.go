@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/117503445/goutils"
-	"github.com/117503445/markdown-translate/internal/provider"
 	"github.com/117503445/markdown-translate/pkg/cfg"
+	"github.com/117503445/markdown-translate/pkg/provider"
 	"github.com/117503445/markdown-translate/pkg/translator"
 	"github.com/rs/zerolog/log"
 )

@@ -3,7 +3,7 @@ package provider_test
 import (
 	"testing"
 
-	"github.com/117503445/markdown-translate/internal/provider"
+	"github.com/117503445/markdown-translate/pkg/provider"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
